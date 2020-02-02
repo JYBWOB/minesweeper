@@ -112,7 +112,7 @@ void MainWindow::on_actionQuit_triggered()
 
 void MainWindow::on_actionAbout_triggered()
 {
-    QMessageBox::information(this,"about","version 1.0");
+    QMessageBox::information(this,"about","version 1.0\r\nmade by jyb\r\nAny questions contract me via email\r\n 1710218@mail.nankai.edu.cn");
 }
 
 
