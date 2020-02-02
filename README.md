@@ -87,4 +87,4 @@ macOS可用Qt直接编译运行
 
 ## 晒几张运行截图
 ![image](https://github.com/Skr-Skr/minesweeper/blob/master/result/screen1.png)
-![image](https://github.com/Skr-Skr/minesweeper/blob/master/result/screen1.png)
+![image](https://github.com/Skr-Skr/minesweeper/blob/master/result/screen2.png)
