@@ -1,12 +1,30 @@
 
-## mines_sweeper扫雷程序
-本项目部分思路参考了王桂林老师的项目课程，在此表示感谢。
-
+## minesweeper扫雷程序
 ## 开发环境
 
-1. 开发工具：Qt5.6.1
+1. 开发工具：Qt5.14.0
 
 2. 开发语言：C++
+
+## 运行
+#### macOS
+macOS可用Qt直接编译运行
+#### Windows
+- 删除sweep_minesV1.pro文件中的ICON = minesweeper.icns
+- 将mainwindow.h中私有成员int distance = 12改为int distance  = 35
+  
+  > (此处因为macOS与Windows的主窗口上部占用像素不一致)
+#### Linux
+  > distance值待测试
+
+## 操作说明
+- 菜单中可选择设置难度(easy || medium || hard || customize)
+- 菜单栏game-->new game开始新游戏
+- 左键翻开 & 右键标雷/标疑问/取消标记
+- 左键&右键同时按下----打开标记完成位置周围其他方块
+
+## 作弊说明
+扫雷游戏最终难免遇到无解的情况，此时只需要按下鼠标中键，则选中的位置如果是雷则标记为红旗，如果非雷则直接打开
 
 ## 文件含义简介
 * **cellitem.h** 和 **cellitem.cpp**  类文件：每个格子元素item，包含状态等
@@ -17,8 +35,7 @@
 * **mainwindow.ui** 图形文件：主窗口图元描述
 * **minesweepscene.h** 和 **minesweepscene.cpp**  类文件：场景布置
 * **res.qrc** 资源文件：描述加载的文件（本项目是一些图片）
-* **sweep_minesV1.pro** qt项目文件，包含一些项目相关设置
-* **sweep_minesV1.pro.user** 用户设置，这个文件可以删掉，再次编译时会自动生成
+* **minesweeper.pro** qt项目文件，包含一些项目相关设置
 * **imgs.pptx** 游戏中用到的图片原件，去除透明背景k可以利用ps处理
 
 
@@ -57,46 +74,17 @@
 * 输比较好判断，只要点击到地雷，直接判输；
 * 判赢方式：用两个变量分别表示目前还没有被翻开的格子和目前已经标记的地雷数目，如果某时刻两个变量相等，则判赢；注意每次翻格子的时候检查一次即可（不用开多线程进行全局判断）；
 
-### 6.关于画面缩放
-
-* 我们的格子元素大小应该根据画面大小自动调整，但是我还没做这一点，初步想法是可以添加窗口变化事件，进行处理。现在为了美观，直接最大化了；
- 
-
-## 项目建立和打包发布
-
-* 选择Qt Widgets Application项目，添加需要的ui图形文件；
-添加类文件；
-* 剩下的就是算法设计和各种事件的处理了；
-* 由于项目采用动态库构建，因此项目打包发布时需要加上各种dll，这里我们用qt自带打包工具windeployqt。具体步骤为：
-   - 将你编译出来的exe文件随意存在一个新的文件夹（名称不要带中文）
-   - 用windows自带的cmd命令进入该文件夹，具体命令为：cd /d 你的文件夹路径
-   - 执行命令：windeployqt 你的exe程序名 
-   - 之后你会发现文件夹里面已经自动包含了所需要的dll库
-   - 注意！还需另外拷贝几个dll进去（因为好多人的电脑没有相关开发环境），这几个dll分别是：libgcc_s_dw2-1.dll、libstdc++-6.dll、libwinpthread-1.dll，这时一般就没有问题了（如果还提示缺少dll，就自己下载放进去~）
- 
 
 ## 与传统wndows扫雷程序的对比
 
 * 没有添加应用程序图标，有兴趣可以自己添加；
 * 没有加入步骤计数、时间、音乐，有兴趣可以自己添加；
 * 踩到雷即结束游戏，没有加入地雷连锁爆炸动画；
-* 左右键同时按下功能未实现（具体实现思路很简单：用两个标记位分别标记左右键是否处于按下状态，两者同时为真的时候，进一步检查标记旗，符合要求就打开）；
-* 目前三个难度选择未实现，但是可以自己配置宽高以及雷数，选择性更大；
 * 关于随机算法与布局：
    - windows系统自带的程序：随机算法偏弱，但是布局算法更胜一筹，各种数字出现几率更大；
    - 自己开发的程序：随机算法偏强，因此布局算法偏弱，有些大的数字出现几率相对小一点。
- 
 
-## 附件
-
-* windows执行程序以动态链接库的方式给出。程序本身只有78k，dll就有十几M。一定注意验证校验码。
-   - MD5: 91A4699F89F275B14E9CB90D721409EE
-   - SHA1: AA72FC1C154198CE36276741D96B9729D5BF8281
-
-* 如果需要在linux上面玩儿，重新编译一下即可；
-
- 
 
 ## 晒几张运行截图
-![image](https://github.com/xiaoxi666/mines_sweeper/blob/master/result/win.PNG)
-![image](https://github.com/xiaoxi666/mines_sweeper/blob/master/result/lost.png)
+![image](https://github.com/Skr-Skr/minesweeper/tree/master/result/screen1.png)
+![image](https://github.com/Skr-Skr/minesweeper/tree/master/result/screen2.png)

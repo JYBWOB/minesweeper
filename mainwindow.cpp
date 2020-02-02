@@ -118,7 +118,7 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *event){
     double px=event->localPos().x();
-    double py=event->localPos().y();//主窗口上边占用了distancepx,因此要减去这个偏移量
+    double py=event->localPos().y();//主窗口上边占用了distance,因此要减去这个偏移量
 
     QGraphicsItem *item =_view->itemAt(px, py-distance);
     _cItem=dynamic_cast<cellItem*>(item);//或 _cItem=(cellItem*)item;
