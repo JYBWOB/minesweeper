@@ -3,8 +3,11 @@
 ## 开发环境
 
 1. 开发工具：Qt5.14.0
-
 2. 开发语言：C++
+
+## 打包文件
+
+https://github.com/Skr-Skr/minesweeper/releases
 
 ## 运行
 #### macOS
