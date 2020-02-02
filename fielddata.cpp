@@ -5,20 +5,21 @@
 //#include <qDebug>
 //using namespace std;
 
-FieldData *FieldData::_ins=nullptr;
+FieldData *FieldData::_ins = nullptr;
 
 FieldData::FieldData()
-    : _width(30), _height(16), _mines(99)//³õÊ¼É¨À×¾ØÕó´óĞ¡
+    : _width(30), _height(16), _mines(99) //åˆå§‹æ‰«é›·çŸ©é˜µå¤§å°
 {
     reset();
     srand(time(nullptr));
 }
 
-FieldData::~FieldData() {
-
+FieldData::~FieldData()
+{
 }
 
-void FieldData::reset(){
+void FieldData::reset()
+{
     _cells.clear();
     initCells();
     deployMines();
@@ -26,64 +27,76 @@ void FieldData::reset(){
     initVisited();
 }
 
-//³õÊ¼»¯£¬ÉêÇë¿Õ¼ä
-void FieldData::initCells() {
-    for(int x = 0; x < _width; ++x) {
+//åˆå§‹åŒ–ï¼Œç”³è¯·ç©ºé—´
+void FieldData::initCells()
+{
+    for (int x = 0; x < _width; ++x)
+    {
         _cells.push_back(CellColumn(_height));
     }
 }
 
-//³õÊ¼»¯visited
-void FieldData::initVisited() {
-    for(int x = 0; x < _width; ++x) {
+//åˆå§‹åŒ–visited
+void FieldData::initVisited()
+{
+    for (int x = 0; x < _width; ++x)
+    {
         _visited.push_back(CellColumn(_height));
     }
-    for(int x = 0; x < _width; ++x) {
-        for(int y = 0; y < _height; ++y) {
+    for (int x = 0; x < _width; ++x)
+    {
+        for (int y = 0; y < _height; ++y)
+        {
             _visited[x][y] = 0;
         }
     }
 }
 
-
-//²¼À×
-void FieldData::deployMines() {
-    //³õÊ¼»¯
-    for(int x = 0; x < _width; ++x) {
-        for(int y = 0; y < _height; ++y) {
+//å¸ƒé›·
+void FieldData::deployMines()
+{
+    //åˆå§‹åŒ–
+    for (int x = 0; x < _width; ++x)
+    {
+        for (int y = 0; y < _height; ++y)
+        {
             _cells[x][y] = 0;
         }
     }
     int cpmines = _mines;
-    while(cpmines) {
+    while (cpmines)
+    {
         int x = rand() % _width;
         int y = rand() % _height;
 
-        //Ö»ÓĞÖ®Ç°Ã»ÓĞ²¼¹ıÀ×µÄÎ»ÖÃ²Å¿ÉÒÔ²¼À×
-        if(_cells[x][y] != -1) {
+        //åªæœ‰ä¹‹å‰æ²¡æœ‰å¸ƒè¿‡é›·çš„ä½ç½®æ‰å¯ä»¥å¸ƒé›·
+        if (_cells[x][y] != -1)
+        {
             --cpmines;
             _cells[x][y] = -1;
 
-            //¸üĞÂÖÜÎ§µÄÀ×Êı
-            updateSurrounding(x - 1, y - 1); //×óÉÏ
-            updateSurrounding(x, y - 1); //ÉÏ
-            updateSurrounding(x + 1, y - 1); //ÓÒÉÏ
-            updateSurrounding(x - 1, y); //×ó
-            updateSurrounding(x + 1, y); //ÓÒ
-            updateSurrounding(x - 1, y + 1); //×óÏÂ
-            updateSurrounding(x, y + 1); //ÏÂ
-            updateSurrounding(x + 1, y + 1); //ÓÒÏÂ
-
+            //æ›´æ–°å‘¨å›´çš„é›·æ•°
+            updateSurrounding(x - 1, y - 1); //å·¦ä¸Š
+            updateSurrounding(x, y - 1);     //ä¸Š
+            updateSurrounding(x + 1, y - 1); //å³ä¸Š
+            updateSurrounding(x - 1, y);     //å·¦
+            updateSurrounding(x + 1, y);     //å³
+            updateSurrounding(x - 1, y + 1); //å·¦ä¸‹
+            updateSurrounding(x, y + 1);     //ä¸‹
+            updateSurrounding(x + 1, y + 1); //å³ä¸‹
         }
     }
-//    dump();
+    //    dump();
 }
 
-//²¼À×Ö®ºó£¬¸üĞÂÖÜÎ§µÄÀ×Êı
-void FieldData::updateSurrounding(int x, int y) {
-    //Ô½½çÅĞ¶Ï
-    if(x >= 0 && x < _width && y >= 0 && y < _height) {
-        if(_cells[x][y] != -1) {
+//å¸ƒé›·ä¹‹åï¼Œæ›´æ–°å‘¨å›´çš„é›·æ•°
+void FieldData::updateSurrounding(int x, int y)
+{
+    //è¶Šç•Œåˆ¤æ–­
+    if (x >= 0 && x < _width && y >= 0 && y < _height)
+    {
+        if (_cells[x][y] != -1)
+        {
             ++_cells[x][y];
         }
     }
@@ -99,16 +112,19 @@ void FieldData::updateSurrounding(int x, int y) {
 //    qDebug()<<"---------------------------------"<<endl;
 //}
 
-//Ã¿´Îµã»÷ºó¸üĞÂ£¨²ÎÊı£º¿í£¬¸ß£¬À×£©
-void FieldData::customizeWHM(int cw, int ch, int cm) {
-    _width=cw;
-    _height=ch;
-    _mines=cm;
+//æ¯æ¬¡ç‚¹å‡»åæ›´æ–°ï¼ˆå‚æ•°ï¼šå®½ï¼Œé«˜ï¼Œé›·ï¼‰
+void FieldData::customizeWHM(int cw, int ch, int cm)
+{
+    _width = cw;
+    _height = ch;
+    _mines = cm;
 }
 
-FieldData * FieldData::getInstance(){
-    if(_ins==nullptr){
-        _ins=new FieldData;
+FieldData *FieldData::getInstance()
+{
+    if (_ins == nullptr)
+    {
+        _ins = new FieldData;
     }
     return _ins;
 }

@@ -5,19 +5,19 @@
 
 configDialog::configDialog(int cw, int ch, int cm, QWidget *parent) :
 
-    QDialog(parent),
+                                                                      QDialog(parent),
 
-    _width(cw),
-    _height(ch),
-    _mines(cm),
+                                                                      _width(cw),
+                                                                      _height(ch),
+                                                                      _mines(cm),
 
-    ui(new Ui::configDialog)
+                                                                      ui(new Ui::configDialog)
 {
     ui->setupUi(this);
 
-    QIntValidator * vaildW = new QIntValidator(1, 30, this);//¿í¶ÈÏÞÖÆ
-    QIntValidator * vaildH = new QIntValidator(1, 19, this);//¸ß¶ÈÏÞÖÆ
-    QIntValidator * vaildM = new QIntValidator(0, 570, this);//À×Êý³õ²½ÏÞÖÆ(ºóÃæ»¹ÓÐ¸öÊý¼ì²é)
+    QIntValidator *vaildW = new QIntValidator(1, 30, this);  //å®½åº¦é™åˆ¶
+    QIntValidator *vaildH = new QIntValidator(1, 19, this);  //é«˜åº¦é™åˆ¶
+    QIntValidator *vaildM = new QIntValidator(0, 570, this); //é›·æ•°åˆæ­¥é™åˆ¶(åŽé¢è¿˜æœ‰ä¸ªæ•°æ£€æŸ¥)
 
     ui->lineEditWidth->setValidator(vaildW);
     ui->lineEditHeight->setValidator(vaildH);
@@ -27,19 +27,21 @@ configDialog::configDialog(int cw, int ch, int cm, QWidget *parent) :
     ui->lineEditHeight->setText(QString::number(_height));
     ui->lineEditMines->setText(QString::number(_mines));
 
-    connect(ui->buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
+    connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
 }
 
-//×Ô¶¨Òåaccept²Û£¨±¾À´Òªµ÷ÓÃ¸¸ÀàµÄ²Û£¬ÏÖÔÚµ÷ÓÃ×Ô¼ºµÄ£¬Òò´ËÉÔºóÐèÒªÏÔÊ¾µ÷ÓÃ¸¸Àà²Û£©
-void configDialog::accept(){
+//è‡ªå®šä¹‰acceptæ§½ï¼ˆæœ¬æ¥è¦è°ƒç”¨çˆ¶ç±»çš„æ§½ï¼ŒçŽ°åœ¨è°ƒç”¨è‡ªå·±çš„ï¼Œå› æ­¤ç¨åŽéœ€è¦æ˜¾ç¤ºè°ƒç”¨çˆ¶ç±»æ§½ï¼‰
+void configDialog::accept()
+{
 
-    _width=ui->lineEditWidth->text().toInt();
-    _height=ui->lineEditHeight->text().toInt();
-    _mines=ui->lineEditMines->text().toInt();
+    _width = ui->lineEditWidth->text().toInt();
+    _height = ui->lineEditHeight->text().toInt();
+    _mines = ui->lineEditMines->text().toInt();
 
-    QDialog::accept();//×Ô¼ºµÄÊµÏÖÒÔºó£¬ÔÙÏÔÊ¾µ÷ÓÃ¸¸ÀàµÄaccept²Û
+    QDialog::accept(); //è‡ªå·±çš„å®žçŽ°ä»¥åŽï¼Œå†æ˜¾ç¤ºè°ƒç”¨çˆ¶ç±»çš„acceptæ§½
 }
 
-configDialog::~configDialog() {
+configDialog::~configDialog()
+{
     delete ui;
 }

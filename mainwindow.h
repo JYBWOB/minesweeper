@@ -7,7 +7,8 @@
 #include <QMouseEvent>
 #include "cellitem.h"
 
-namespace Ui {
+namespace Ui
+{
 class MainWindow;
 }
 
@@ -19,12 +20,12 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void deleteOldScene();//É¾³ı¾É³¡¾°
-    void addNewScene();//²¼ÖÃĞÂ³¡¾°
-    void adjustWindowsWH();//µ÷ÕûÖ÷´°¿Ú´óĞ¡
-    void block_blank(double px, double py, int x, int y);//Ò»Õû¿éÎª¿Õ£¬È«²¿·­ÆğÀ´£¬Ö±µ½±ßÔµÎªÊı×Ö»òÓöµ½±ß½ç
+    void deleteOldScene();                                //åˆ é™¤æ—§åœºæ™¯
+    void addNewScene();                                   //å¸ƒç½®æ–°åœºæ™¯
+    void adjustWindowsWH();                               //è°ƒæ•´ä¸»çª—å£å¤§å°
+    void block_blank(double px, double py, int x, int y); //ä¸€æ•´å—ä¸ºç©ºï¼Œå…¨éƒ¨ç¿»èµ·æ¥ï¼Œç›´åˆ°è¾¹ç¼˜ä¸ºæ•°å­—æˆ–é‡åˆ°è¾¹ç•Œ
 
-    bool JudgeIsWin();//ÅĞÓ®
+    bool JudgeIsWin(); //åˆ¤èµ¢
     void Lost();
 
 protected:
@@ -45,7 +46,6 @@ private:
     cellItem *_cItem;
     bool left = false;
     bool right = false;
-
 
     int distance = 12;
 };

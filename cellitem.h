@@ -4,12 +4,19 @@
 #include <QGraphicsPixmapItem>
 #include <QPixmap>
 
-//Ò»¸öĞ¡¸ñ×ÓµÄĞĞÎª
-enum cellStatus {
-  INITIAL, FLAG, QUESTION, EXPLODE, DIGIT, BLANK
+//ä¸€ä¸ªå°æ ¼å­çš„è¡Œä¸º
+enum cellStatus
+{
+  INITIAL,
+  FLAG,
+  QUESTION,
+  EXPLODE,
+  DIGIT,
+  BLANK
 };
 
-class cellItem : public QGraphicsPixmapItem {
+class cellItem : public QGraphicsPixmapItem
+{
 public:
   cellItem(int x, int y,
            enum cellStatus status = INITIAL, QGraphicsItem *parent = Q_NULLPTR);
@@ -18,13 +25,13 @@ public:
   enum cellStatus getStatus();
   void setStatus(enum cellStatus status, int digit = -2);
 
-  //staticÖ»³õÊ¼»¯Ò»´Î
-  static QPixmap * _initial;
-  static QPixmap * _flag;
-  static QPixmap * _question;
-  static QPixmap * _blank;
-  static QPixmap * _explode;
-  static QPixmap * _digits[9];
+  //staticåªåˆå§‹åŒ–ä¸€æ¬¡
+  static QPixmap *_initial;
+  static QPixmap *_flag;
+  static QPixmap *_question;
+  static QPixmap *_blank;
+  static QPixmap *_explode;
+  static QPixmap *_digits[9];
 
   static int _refCount;
 
@@ -32,7 +39,6 @@ protected:
   int cx;
   int cy;
   enum cellStatus _status;
-
 };
 
 #endif // CELLITEM_H

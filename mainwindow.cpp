@@ -8,12 +8,12 @@
 #include <queue>
 //using namespace std;
 
-double factor_Scale=0.9;//Ëõ·ÅÒò×Ó(×Ô¶¨Òå),ÆäÊµ×îºóÏŞÖÆ30*19ÁË£¬Õâ¸öËõ·ÅÒò×ÓÔÚ14´çÒÔÉÏÆÁÄ»²»»áÓÃµ½¡£
-bool IsScale=false;//ÊÇ·ñËõ·Å(Ëõ·ÅÁËµÄ»°Êó±ê×ø±êÒ²ÒªËõ·Å)
+double factor_Scale = 0.9; //ç¼©æ”¾å› å­(è‡ªå®šä¹‰),å…¶å®æœ€åé™åˆ¶30*19äº†ï¼Œè¿™ä¸ªç¼©æ”¾å› å­åœ¨14å¯¸ä»¥ä¸Šå±å¹•ä¸ä¼šç”¨åˆ°ã€‚
+bool IsScale = false;      //æ˜¯å¦ç¼©æ”¾(ç¼©æ”¾äº†çš„è¯é¼ æ ‡åæ ‡ä¹Ÿè¦ç¼©æ”¾)
 
-//ÅĞÓ®Ìõ¼ş:µØÀ×È«²¿±ê¼Ç&&ÆäËûÈ«²¿·­¿ª(¼´×´Ì¬Îª³õÊ¼»¯µÄ¸öÊıÎªµØÀ×Êı)
-int remain_mines=Field->getMines();//Ê£ÓàĞèÒªÑ°ÕÒµÄµØÀ×ÊıÁ¿
-int remain_INITIAL=Field->getWidth()*Field->getHeight();//×´Ì¬»¹ÊÇ³õÊ¼»¯µÄ·½¿é¸öÊı
+//åˆ¤èµ¢æ¡ä»¶:åœ°é›·å…¨éƒ¨æ ‡è®°&&å…¶ä»–å…¨éƒ¨ç¿»å¼€(å³çŠ¶æ€ä¸ºåˆå§‹åŒ–çš„ä¸ªæ•°ä¸ºåœ°é›·æ•°)
+int remain_mines = Field->getMines();                        //å‰©ä½™éœ€è¦å¯»æ‰¾çš„åœ°é›·æ•°é‡
+int remain_INITIAL = Field->getWidth() * Field->getHeight(); //çŠ¶æ€è¿˜æ˜¯åˆå§‹åŒ–çš„æ–¹å—ä¸ªæ•°
 
 struct Point_Px
 {
@@ -21,9 +21,8 @@ struct Point_Px
     double py;
 };
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
+                                          ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     FieldData::getInstance();
@@ -31,12 +30,12 @@ MainWindow::MainWindow(QWidget *parent) :
     _view = new QGraphicsView;
     this->setCentralWidget(_view);
 
-    _scene=new mineSweepScene;
+    _scene = new mineSweepScene;
     _view->setScene(_scene);
 
     //qDebug()<<"0--------"<<this->width()<<_view->width()<<_scene->width();
-    //ÉèÖÃ´°¿Ú´óĞ¡ºÏÊÊ£¬ÕıºÃ°üº¬_view¼´¿É
-    this->showMaximized();//×î´ó»¯´°¿Ú
+    //è®¾ç½®çª—å£å¤§å°åˆé€‚ï¼Œæ­£å¥½åŒ…å«_viewå³å¯
+    this->showMaximized(); //æœ€å¤§åŒ–çª—å£
 }
 
 MainWindow::~MainWindow()
@@ -44,63 +43,72 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::deleteOldScene(){
-    //³¡¾°»¹Ô­
-    this->showMaximized();//×î´ó»¯´°¿Ú
+void MainWindow::deleteOldScene()
+{
+    //åœºæ™¯è¿˜åŸ
+    this->showMaximized(); //æœ€å¤§åŒ–çª—å£
     //thisH=this->width();
-    if(_scene->width()>this->width()){
-        _view->scale(_scene->width()/this->width()/factor_Scale,_scene->width()/this->width()/factor_Scale);
-        IsScale=false;
+    if (_scene->width() > this->width())
+    {
+        _view->scale(_scene->width() / this->width() / factor_Scale, _scene->width() / this->width() / factor_Scale);
+        IsScale = false;
     }
-    //É¾³ı¾É³¡¾°
-    if(_scene!=nullptr){
+    //åˆ é™¤æ—§åœºæ™¯
+    if (_scene != nullptr)
+    {
         delete _scene;
         _scene = nullptr;
     }
 }
 
-void MainWindow::addNewScene(){
-    //²¼ÖÃĞÂ³¡¾°
+void MainWindow::addNewScene()
+{
+    //å¸ƒç½®æ–°åœºæ™¯
     _scene = new mineSweepScene;
     _view->setScene(_scene);
 
-    //ÔªËØËõ·Å(×¢ÒâÖ»¸ù¾İ¿í¶ÈËõ·Å£¬ÒòÎªÉÏÏÂ¹ö¶¯ºÜÆ½³££¬µ«×óÓÒ¹ö¶¯ºÜÄÑÊÜ)
-    //µ÷ÕûÔªËØ´óĞ¡(ÔªËØ¹ı¶àÊ±_scene->width()ºÜ´ó£¬ĞèÒªËõ·Å)£¬×¢ÒâËõ·Åºó£¬ÏÂ´Î²¼ÖÃ³¡¾°»¹ĞèÒª»¹Ô­
-    this->showMaximized();//×î´ó»¯´°¿Ú
-    if(_scene->width()>this->width()){
-        IsScale=true;
-        _view->scale(this->width()/_scene->width()*factor_Scale,this->width()/_scene->width()*factor_Scale);//ÉèÖÃ±¾´Î´°¿Ú´óĞ¡
+    //å…ƒç´ ç¼©æ”¾(æ³¨æ„åªæ ¹æ®å®½åº¦ç¼©æ”¾ï¼Œå› ä¸ºä¸Šä¸‹æ»šåŠ¨å¾ˆå¹³å¸¸ï¼Œä½†å·¦å³æ»šåŠ¨å¾ˆéš¾å—)
+    //è°ƒæ•´å…ƒç´ å¤§å°(å…ƒç´ è¿‡å¤šæ—¶_scene->width()å¾ˆå¤§ï¼Œéœ€è¦ç¼©æ”¾)ï¼Œæ³¨æ„ç¼©æ”¾åï¼Œä¸‹æ¬¡å¸ƒç½®åœºæ™¯è¿˜éœ€è¦è¿˜åŸ
+    this->showMaximized(); //æœ€å¤§åŒ–çª—å£
+    if (_scene->width() > this->width())
+    {
+        IsScale = true;
+        _view->scale(this->width() / _scene->width() * factor_Scale, this->width() / _scene->width() * factor_Scale); //è®¾ç½®æœ¬æ¬¡çª—å£å¤§å°
     }
-    else{
-        IsScale=false;
+    else
+    {
+        IsScale = false;
     }
 
-    remain_mines=Field->getMines();//Ê£ÓàĞèÒªÑ°ÕÒµÄµØÀ×ÊıÁ¿
-    remain_INITIAL=Field->getWidth()*Field->getHeight();//×´Ì¬»¹ÊÇ³õÊ¼»¯µÄ·½¿é¸öÊı
+    remain_mines = Field->getMines();                        //å‰©ä½™éœ€è¦å¯»æ‰¾çš„åœ°é›·æ•°é‡
+    remain_INITIAL = Field->getWidth() * Field->getHeight(); //çŠ¶æ€è¿˜æ˜¯åˆå§‹åŒ–çš„æ–¹å—ä¸ªæ•°
 }
 
 void MainWindow::on_actionNew_game_triggered()
 {
     deleteOldScene();
-    //¿ªÊ¼ĞÂÓÎÏ·²»ĞèÒªÀ´¿¼ÂÇÀ×ÊıÌ«¶àµÄÇé¿ö£¬ÒòÎªºÍÉÏÒ»³¡¿í¸ßÀ×ÊıÄ¿ÏàÍ¬£¬Ö»ÊÇÎ»ÖÃ±äÁË
-    Field->customizeWHM(Field->getWidth(),Field->getHeight(),Field->getMines());
+    //å¼€å§‹æ–°æ¸¸æˆä¸éœ€è¦æ¥è€ƒè™‘é›·æ•°å¤ªå¤šçš„æƒ…å†µï¼Œå› ä¸ºå’Œä¸Šä¸€åœºå®½é«˜é›·æ•°ç›®ç›¸åŒï¼Œåªæ˜¯ä½ç½®å˜äº†
+    Field->customizeWHM(Field->getWidth(), Field->getHeight(), Field->getMines());
     Field->reset();
     addNewScene();
 }
 
 void MainWindow::on_actionConfig_triggered()
 {
-    configDialog config(Field->getWidth(),Field->getHeight(),Field->getMines());
-    if(config.exec()==QDialog::Accepted){
-        //¼ì²éÀ×Êı£¬ÏŞÖÆÆä²»ÄÜÌ«¶à
-        if(config._mines<config._width*config._height*0.5){
+    configDialog config(Field->getWidth(), Field->getHeight(), Field->getMines());
+    if (config.exec() == QDialog::Accepted)
+    {
+        //æ£€æŸ¥é›·æ•°ï¼Œé™åˆ¶å…¶ä¸èƒ½å¤ªå¤š
+        if (config._mines < config._width * config._height * 0.5)
+        {
             deleteOldScene();
-            Field->customizeWHM(config._width,config._height,config._mines);
+            Field->customizeWHM(config._width, config._height, config._mines);
             Field->reset();
             addNewScene();
         }
-        else{
-            QMessageBox::warning(this,"Warning","mines too many!");
+        else
+        {
+            QMessageBox::warning(this, "Warning", "mines too many!");
         }
     }
 }
@@ -112,41 +120,48 @@ void MainWindow::on_actionQuit_triggered()
 
 void MainWindow::on_actionAbout_triggered()
 {
-    QMessageBox::information(this,"about","version 1.0\r\nmade by jyb\r\nAny questions contract me via email\r\n 1710218@mail.nankai.edu.cn");
+    QMessageBox::information(this, "about", "version 1.0\r\nmade by jyb\r\nAny questions contract me via email\r\n 1710218@mail.nankai.edu.cn");
 }
 
+void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    double px = event->localPos().x();
+    double py = event->localPos().y(); //ä¸»çª—å£ä¸Šè¾¹å ç”¨äº†distance,å› æ­¤è¦å‡å»è¿™ä¸ªåç§»é‡
 
-void MainWindow::mouseReleaseEvent(QMouseEvent *event){
-    double px=event->localPos().x();
-    double py=event->localPos().y();//Ö÷´°¿ÚÉÏ±ßÕ¼ÓÃÁËdistance,Òò´ËÒª¼õÈ¥Õâ¸öÆ«ÒÆÁ¿
+    QGraphicsItem *item = _view->itemAt(px, py - distance);
+    _cItem = dynamic_cast<cellItem *>(item); //æˆ– _cItem=(cellItem*)item;
 
-    QGraphicsItem *item =_view->itemAt(px, py-distance);
-    _cItem=dynamic_cast<cellItem*>(item);//»ò _cItem=(cellItem*)item;
+    if (item != nullptr)
+    { //ç‚¹å‡»åœ¨åœ°å›¾èŒƒå›´ä¹‹å¤–ä¸äºˆå“åº”
 
-    if(item!=nullptr){//µã»÷ÔÚµØÍ¼·¶Î§Ö®Íâ²»ÓèÏìÓ¦
+        static double cw = IsScale ? item->boundingRect().width() * this->width() / _scene->width() * factor_Scale : item->boundingRect().width();
+        static double ch = IsScale ? item->boundingRect().height() * this->width() / _scene->width() * factor_Scale : item->boundingRect().height();
 
-        static double cw = IsScale ?  item->boundingRect().width()*this->width()/_scene->width()*factor_Scale : item->boundingRect().width();
-        static double ch = IsScale ?  item->boundingRect().height()*this->width()/_scene->width()*factor_Scale : item->boundingRect().height();
-
-        switch(event->button())
+        switch (event->button())
         {
         case Qt::LeftButton:
             uncover(item, cw, ch, px, py);
             break;
         case Qt::RightButton:
-            if(INITIAL==_cItem->getStatus()){
+            if (INITIAL == _cItem->getStatus())
+            {
                 _cItem->setStatus(FLAG);
-                if(-1==Field->_cells[item->pos().x()/cw][item->pos().y()/ch]){
-                    --remain_mines;JudgeIsWin();
+                if (-1 == Field->_cells[item->pos().x() / cw][item->pos().y() / ch])
+                {
+                    --remain_mines;
+                    JudgeIsWin();
                 }
             }
-            else if(FLAG==_cItem->getStatus()){
+            else if (FLAG == _cItem->getStatus())
+            {
                 _cItem->setStatus(QUESTION);
-                if(-1==Field->_cells[item->pos().x()/cw][item->pos().y()/ch]){
+                if (-1 == Field->_cells[item->pos().x() / cw][item->pos().y() / ch])
+                {
                     ++remain_mines;
                 }
             }
-            else if(QUESTION==_cItem->getStatus()){
+            else if (QUESTION == _cItem->getStatus())
+            {
                 _cItem->setStatus(INITIAL);
             }
             break;
@@ -162,17 +177,22 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event){
 
 void MainWindow::uncover(QGraphicsItem *item, double cw, double ch, double px, double py, bool cheat)
 {
-    //Ö»ÓĞ³õÊ¼»¯ºÍÎÊºÅ×´Ì¬×ó¼ü²Å¿ÉÒÔµã»÷½øĞĞÉ¨À×
-    _cItem=dynamic_cast<cellItem*>(item);
-    if(INITIAL==_cItem->getStatus() || QUESTION==_cItem->getStatus()){
-        switch(Field->_cells[item->pos().x()/cw][item->pos().y()/ch]){//»ñÈ¡Êı¾İÓò¶ÔÓ¦Êı¾İ
+    //åªæœ‰åˆå§‹åŒ–å’Œé—®å·çŠ¶æ€å·¦é”®æ‰å¯ä»¥ç‚¹å‡»è¿›è¡Œæ‰«é›·
+    _cItem = dynamic_cast<cellItem *>(item);
+    if (INITIAL == _cItem->getStatus() || QUESTION == _cItem->getStatus())
+    {
+        switch (Field->_cells[item->pos().x() / cw][item->pos().y() / ch])
+        { //è·å–æ•°æ®åŸŸå¯¹åº”æ•°æ®
         //Field->_visited[item->pos().x()/cw][item->pos().y()/ch]=1;
         case -1:
             --remain_INITIAL;
-            if(cheat) {
+            if (cheat)
+            {
                 _cItem->setStatus(FLAG);
-                if(-1==Field->_cells[item->pos().x()/cw][item->pos().y()/ch]){
-                    --remain_mines;JudgeIsWin();
+                if (-1 == Field->_cells[item->pos().x() / cw][item->pos().y() / ch])
+                {
+                    --remain_mines;
+                    JudgeIsWin();
                 }
             }
             else
@@ -180,248 +200,295 @@ void MainWindow::uncover(QGraphicsItem *item, double cw, double ch, double px, d
             break;
         case 0:
             _cItem->setStatus(BLANK);
-            --remain_INITIAL;JudgeIsWin();
+            --remain_INITIAL;
+            JudgeIsWin();
 
-            block_blank(px,py,item->pos().x()/cw,item->pos().y()/ch);
+            block_blank(px, py, item->pos().x() / cw, item->pos().y() / ch);
             //cout<<"My surrounding have no mines."<<endl;
             break;
         case 1:
-            _cItem->setStatus(DIGIT,1);
-            --remain_INITIAL;JudgeIsWin();
+            _cItem->setStatus(DIGIT, 1);
+            --remain_INITIAL;
+            JudgeIsWin();
             //cout<<"My surrounding has 1 mine."<<endl;
             break;
         case 2:
-            _cItem->setStatus(DIGIT,2);
-            --remain_INITIAL;JudgeIsWin();
+            _cItem->setStatus(DIGIT, 2);
+            --remain_INITIAL;
+            JudgeIsWin();
             //cout<<"My surrounding have 2 mines."<<endl;
             break;
         case 3:
-            _cItem->setStatus(DIGIT,3);
-             --remain_INITIAL;JudgeIsWin();
+            _cItem->setStatus(DIGIT, 3);
+            --remain_INITIAL;
+            JudgeIsWin();
             //cout<<"My surrounding have 3 mines."<<endl;
             break;
         case 4:
-            _cItem->setStatus(DIGIT,4);
-             --remain_INITIAL;JudgeIsWin();
+            _cItem->setStatus(DIGIT, 4);
+            --remain_INITIAL;
+            JudgeIsWin();
             //cout<<"My surrounding have 4 mines."<<endl;
             break;
         case 5:
-            _cItem->setStatus(DIGIT,5);
-            --remain_INITIAL;JudgeIsWin();
+            _cItem->setStatus(DIGIT, 5);
+            --remain_INITIAL;
+            JudgeIsWin();
             //cout<<"My surrounding have 5 mines."<<endl;
             break;
         case 6:
-            _cItem->setStatus(DIGIT,6);
-            --remain_INITIAL;JudgeIsWin();
+            _cItem->setStatus(DIGIT, 6);
+            --remain_INITIAL;
+            JudgeIsWin();
             //cout<<"My surrounding have 6 mines."<<endl;
             break;
         case 7:
-            _cItem->setStatus(DIGIT,7);
-            --remain_INITIAL;JudgeIsWin();
+            _cItem->setStatus(DIGIT, 7);
+            --remain_INITIAL;
+            JudgeIsWin();
             //cout<<"My surrounding have 7 mines."<<endl;
             break;
         case 8:
-            _cItem->setStatus(DIGIT,8);
-            --remain_INITIAL;JudgeIsWin();
+            _cItem->setStatus(DIGIT, 8);
+            --remain_INITIAL;
+            JudgeIsWin();
             //cout<<"My surrounding have 8 mines."<<endl;
             break;
         default:
             break;
         }
     }
-    else if(FLAG==_cItem->getStatus()){//²åÆìÎ»ÖÃÖ»ÄÜÍ¨¹ıÓÒ¼ü½âËø
+    else if (FLAG == _cItem->getStatus())
+    { //æ’æ——ä½ç½®åªèƒ½é€šè¿‡å³é”®è§£é”
         ;
     }
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
-    if(event->button() == Qt::LeftButton)
+    if (event->button() == Qt::LeftButton)
         left = true;
-    if(event->button() == Qt::RightButton)
+    if (event->button() == Qt::RightButton)
         right = true;
-    if(left && right) {
-        double px=event->localPos().x();
-        double py=event->localPos().y();
-        //Ö÷´°¿ÚÉÏ±ßÕ¼ÓÃÁËdistancepx,Òò´ËÒª¼õÈ¥Õâ¸öÆ«ÒÆÁ¿
-        QGraphicsItem *item =_view->itemAt(px, py-distance);
-        if(item == nullptr)
+    if (left && right)
+    {
+        double px = event->localPos().x();
+        double py = event->localPos().y();
+        //ä¸»çª—å£ä¸Šè¾¹å ç”¨äº†distancepx,å› æ­¤è¦å‡å»è¿™ä¸ªåç§»é‡
+        QGraphicsItem *item = _view->itemAt(px, py - distance);
+        if (item == nullptr)
             return;
-        static double cw = IsScale ?  item->boundingRect().width()*this->width()/_scene->width()*factor_Scale : item->boundingRect().width();
-        static double ch = IsScale ?  item->boundingRect().height()*this->width()/_scene->width()*factor_Scale : item->boundingRect().height();
-        _cItem=dynamic_cast<cellItem*>(item);//»ò _cItem=(cellItem*)item;
-        int curNum = Field->_cells[item->pos().x()/cw][item->pos().y()/ch];
-        if(item != nullptr && curNum >= 1 && curNum <= 8) {//µã»÷ÔÚµØÍ¼·¶Î§Ö®Íâ²»ÓèÏìÓ¦
+        static double cw = IsScale ? item->boundingRect().width() * this->width() / _scene->width() * factor_Scale : item->boundingRect().width();
+        static double ch = IsScale ? item->boundingRect().height() * this->width() / _scene->width() * factor_Scale : item->boundingRect().height();
+        _cItem = dynamic_cast<cellItem *>(item); //æˆ– _cItem=(cellItem*)item;
+        int curNum = Field->_cells[item->pos().x() / cw][item->pos().y() / ch];
+        if (item != nullptr && curNum >= 1 && curNum <= 8)
+        { //ç‚¹å‡»åœ¨åœ°å›¾èŒƒå›´ä¹‹å¤–ä¸äºˆå“åº”
             int flagNum = 0;
-            if((item =_view->itemAt(px - cw, py -ch - distance))!=nullptr) {
-                _cItem=dynamic_cast<cellItem*>(item);
-                if(_cItem->getStatus() == FLAG)
+            if ((item = _view->itemAt(px - cw, py - ch - distance)) != nullptr)
+            {
+                _cItem = dynamic_cast<cellItem *>(item);
+                if (_cItem->getStatus() == FLAG)
                     flagNum++;
             }
-            if((item =_view->itemAt(px, py -ch - distance))!=nullptr) {
-                _cItem=dynamic_cast<cellItem*>(item);
-                if(_cItem->getStatus() == FLAG)
+            if ((item = _view->itemAt(px, py - ch - distance)) != nullptr)
+            {
+                _cItem = dynamic_cast<cellItem *>(item);
+                if (_cItem->getStatus() == FLAG)
                     flagNum++;
             }
-            if((item =_view->itemAt(px + cw, py -ch - distance))!=nullptr) {
-                _cItem=dynamic_cast<cellItem*>(item);
-                if(_cItem->getStatus() == FLAG)
+            if ((item = _view->itemAt(px + cw, py - ch - distance)) != nullptr)
+            {
+                _cItem = dynamic_cast<cellItem *>(item);
+                if (_cItem->getStatus() == FLAG)
                     flagNum++;
             }
-            if((item =_view->itemAt(px - cw, py- distance))!=nullptr) {
-                _cItem=dynamic_cast<cellItem*>(item);
-                if(_cItem->getStatus() == FLAG)
+            if ((item = _view->itemAt(px - cw, py - distance)) != nullptr)
+            {
+                _cItem = dynamic_cast<cellItem *>(item);
+                if (_cItem->getStatus() == FLAG)
                     flagNum++;
             }
-            if((item =_view->itemAt(px + cw, py- distance))!=nullptr) {
-                _cItem=dynamic_cast<cellItem*>(item);
-                if(_cItem->getStatus() == FLAG)
+            if ((item = _view->itemAt(px + cw, py - distance)) != nullptr)
+            {
+                _cItem = dynamic_cast<cellItem *>(item);
+                if (_cItem->getStatus() == FLAG)
                     flagNum++;
             }
-            if((item =_view->itemAt(px - cw, py + ch - distance))!=nullptr) {
-                _cItem=dynamic_cast<cellItem*>(item);
-                if(_cItem->getStatus() == FLAG)
+            if ((item = _view->itemAt(px - cw, py + ch - distance)) != nullptr)
+            {
+                _cItem = dynamic_cast<cellItem *>(item);
+                if (_cItem->getStatus() == FLAG)
                     flagNum++;
             }
-            if((item =_view->itemAt(px, py + ch - distance))!=nullptr) {
-                _cItem=dynamic_cast<cellItem*>(item);
-                if(_cItem->getStatus() == FLAG)
+            if ((item = _view->itemAt(px, py + ch - distance)) != nullptr)
+            {
+                _cItem = dynamic_cast<cellItem *>(item);
+                if (_cItem->getStatus() == FLAG)
                     flagNum++;
             }
-            if((item =_view->itemAt(px + cw, py + ch - distance))!=nullptr) {
-                _cItem=dynamic_cast<cellItem*>(item);
-                if(_cItem->getStatus() == FLAG)
+            if ((item = _view->itemAt(px + cw, py + ch - distance)) != nullptr)
+            {
+                _cItem = dynamic_cast<cellItem *>(item);
+                if (_cItem->getStatus() == FLAG)
                     flagNum++;
             }
-            if(flagNum != curNum)
+            if (flagNum != curNum)
                 return;
-            if((item =_view->itemAt(px - cw, py - ch - distance))!=nullptr)
+            if ((item = _view->itemAt(px - cw, py - ch - distance)) != nullptr)
                 uncover(item, cw, ch, px - cw, py - ch);
-            if((item =_view->itemAt(px, py - ch - distance))!=nullptr)
+            if ((item = _view->itemAt(px, py - ch - distance)) != nullptr)
                 uncover(item, cw, ch, px, py - ch);
-            if((item =_view->itemAt(px + cw, py - ch - distance))!=nullptr)
+            if ((item = _view->itemAt(px + cw, py - ch - distance)) != nullptr)
                 uncover(item, cw, ch, px + cw, py - ch);
-            if((item =_view->itemAt(px - cw, py- distance))!=nullptr)
+            if ((item = _view->itemAt(px - cw, py - distance)) != nullptr)
                 uncover(item, cw, ch, px - cw, py);
-            if((item =_view->itemAt(px + cw, py- distance))!=nullptr)
+            if ((item = _view->itemAt(px + cw, py - distance)) != nullptr)
                 uncover(item, cw, ch, px + cw, py);
-            if((item =_view->itemAt(px - cw, py + ch - distance))!=nullptr)
+            if ((item = _view->itemAt(px - cw, py + ch - distance)) != nullptr)
                 uncover(item, cw, ch, px - cw, py + ch);
-            if((item =_view->itemAt(px, py + ch - distance))!=nullptr)
+            if ((item = _view->itemAt(px, py + ch - distance)) != nullptr)
                 uncover(item, cw, ch, px, py + ch);
-            if((item =_view->itemAt(px + cw, py + ch - distance))!=nullptr)
+            if ((item = _view->itemAt(px + cw, py + ch - distance)) != nullptr)
                 uncover(item, cw, ch, px + cw, py + ch);
         }
     }
     grabMouse();
 }
 
-//pxºÍpyÎªÊó±êÖ¸Õë×ø±ê£¬xºÍyÎªÊı¾İ¾ØÕó×ø±êµã(¿¼ÂÇµ½Í¼ÏñÔªËØ¿ÉÄÜ»áËõ·Å£¬Òò´ËÊó±ê×ø±ê¶¨ÒåÎªdouble,µ«ÊÇÕâÖÖ¾«¶ÈÏÂ£¬ÈÔÈ»²»ÄÜ·ÅÌ«¶àÔªËØ£¬·ñÔò×Ô¶¯Ñ°ÕÒÊ±»á³öÏÖÔ½½çÇé¿ö£¬Òò´ËĞèÏŞ¶¨ÔªËØÉÏÏŞ)
-void MainWindow::block_blank(double px,double py,int x,int y){
+//pxå’Œpyä¸ºé¼ æ ‡æŒ‡é’ˆåæ ‡ï¼Œxå’Œyä¸ºæ•°æ®çŸ©é˜µåæ ‡ç‚¹(è€ƒè™‘åˆ°å›¾åƒå…ƒç´ å¯èƒ½ä¼šç¼©æ”¾ï¼Œå› æ­¤é¼ æ ‡åæ ‡å®šä¹‰ä¸ºdouble,ä½†æ˜¯è¿™ç§ç²¾åº¦ä¸‹ï¼Œä»ç„¶ä¸èƒ½æ”¾å¤ªå¤šå…ƒç´ ï¼Œå¦åˆ™è‡ªåŠ¨å¯»æ‰¾æ—¶ä¼šå‡ºç°è¶Šç•Œæƒ…å†µï¼Œå› æ­¤éœ€é™å®šå…ƒç´ ä¸Šé™)
+void MainWindow::block_blank(double px, double py, int x, int y)
+{
     Field->initVisited();
 
-    QGraphicsItem *item =_view->itemAt(px, py-distance);
+    QGraphicsItem *item = _view->itemAt(px, py - distance);
 
-    static double cw = IsScale ?  item->boundingRect().width()*this->width()/_scene->width()*factor_Scale : item->boundingRect().width();
-    static double ch = IsScale ?  item->boundingRect().height()*this->width()/_scene->width()*factor_Scale : item->boundingRect().height();
+    static double cw = IsScale ? item->boundingRect().width() * this->width() / _scene->width() * factor_Scale : item->boundingRect().width();
+    static double ch = IsScale ? item->boundingRect().height() * this->width() / _scene->width() * factor_Scale : item->boundingRect().height();
 
-    const int dir[8][2]={{0, 1}, {1, 0}, {0, -1}, {-1, 0},//ÏÂ,ÓÒ,ÉÏ,×ó
-                         {1, 1}, {1, -1}, {-1, -1}, {-1, 1}//ÓÒÏÂ,ÓÒÉÏ,×óÉÏ,×óÏÂ
-                        };//°Ë¸ö·½Ïò¿ÉÒÔÀ©Õ¹
+    const int dir[8][2] = {
+        {0, 1}, {1, 0}, {0, -1}, {-1, 0}, //ä¸‹,å³,ä¸Š,å·¦
+        {1, 1},
+        {1, -1},
+        {-1, -1},
+        {-1, 1} //å³ä¸‹,å³ä¸Š,å·¦ä¸Š,å·¦ä¸‹
+    };          //å…«ä¸ªæ–¹å‘å¯ä»¥æ‰©å±•
 
-    queue<pair<Point_Px,int>> que;//±£´æÊó±ê×ø±êºÍÊı¾İ¾ØÕó×ø±ê
-    que.push(pair<Point_Px,int>({px,py},x*Field->getHeight()+y));
-    Field->_visited[x][y]=1;
-    while(!que.empty()){
-        pair<Point_Px,int> fr=que.front();
+    queue<pair<Point_Px, int>> que; //ä¿å­˜é¼ æ ‡åæ ‡å’Œæ•°æ®çŸ©é˜µåæ ‡
+    que.push(pair<Point_Px, int>({px, py}, x * Field->getHeight() + y));
+    Field->_visited[x][y] = 1;
+    while (!que.empty())
+    {
+        pair<Point_Px, int> fr = que.front();
         que.pop();
-        px=fr.first.px;
-        py=fr.first.py;
-        x=fr.second/Field->getHeight();
-        y=fr.second%Field->getHeight();
+        px = fr.first.px;
+        py = fr.first.py;
+        x = fr.second / Field->getHeight();
+        y = fr.second % Field->getHeight();
 
-        for(int i=0;i<8;++i){//8¸ö·½ÏòÀ©Õ¹
-            double npx=px+cw*dir[i][0];
-            double npy=py+ch*dir[i][1];
-            int nx=x+dir[i][0];
-            int ny=y+dir[i][1];
-            //³¬³ö±ß½çÅĞ¶Ï
+        for (int i = 0; i < 8; ++i)
+        { //8ä¸ªæ–¹å‘æ‰©å±•
+            double npx = px + cw * dir[i][0];
+            double npy = py + ch * dir[i][1];
+            int nx = x + dir[i][0];
+            int ny = y + dir[i][1];
+            //è¶…å‡ºè¾¹ç•Œåˆ¤æ–­
             //qDebug()<<npx<<npy<<nx<<ny;
-            if(nx<0 || nx>=Field->getWidth() || ny<0 || ny>=Field->getHeight()
-                    || 1==Field->_visited[nx][ny]){
+            if (nx < 0 || nx >= Field->getWidth() || ny < 0 || ny >= Field->getHeight() || 1 == Field->_visited[nx][ny])
+            {
                 //qDebug()<<"miaomiao-continue";
                 continue;
             }
 
-            item =_view->itemAt(npx, npy-distance);
-            _cItem=dynamic_cast<cellItem*>(item);
+            item = _view->itemAt(npx, npy - distance);
+            _cItem = dynamic_cast<cellItem *>(item);
 
-            //²åÆìµÄ²»ÔÙÑ°Â·
-            if(FLAG==_cItem->getStatus())
+            //æ’æ——çš„ä¸å†å¯»è·¯
+            if (FLAG == _cItem->getStatus())
                 continue;
 
-            //Èç¹ûÊı×ÖÎª0£¬±íÊ¾ÖÜÎ§Ã»ÓĞÀ×£¬Ôò¼ÌĞø¼ÓÈë¶ÓÁĞ½øĞĞÏÂÈ¥
-            if(0==Field->_cells[nx][ny]){
-                --remain_INITIAL;JudgeIsWin();
-                que.push(pair<Point_Px,int>({npx,npy},nx*Field->getHeight()+ny));
-                Field->_visited[nx][ny]=1;
+            //å¦‚æœæ•°å­—ä¸º0ï¼Œè¡¨ç¤ºå‘¨å›´æ²¡æœ‰é›·ï¼Œåˆ™ç»§ç»­åŠ å…¥é˜Ÿåˆ—è¿›è¡Œä¸‹å»
+            if (0 == Field->_cells[nx][ny])
+            {
+                --remain_INITIAL;
+                JudgeIsWin();
+                que.push(pair<Point_Px, int>({npx, npy}, nx * Field->getHeight() + ny));
+                Field->_visited[nx][ny] = 1;
                 _cItem->setStatus(BLANK);
             }
-            else{
-                switch (Field->_cells[nx][ny]) {
+            else
+            {
+                switch (Field->_cells[nx][ny])
+                {
                 case 1:
-                    if(_cItem->getStatus()!=DIGIT){//×¢ÒâĞèÒª¼ÓÉÏ×´Ì¬ÅĞ¶Ï£¬²»È»»áÔÙ´ÎÉèÖÃÏàÍ¬×´Ì¬£¬ÀË·Ñ×ÊÔ´£¬ÇÒ°Ñ×´Ì¬¸öÊı¼õÈ¥1£¬Ôì³É¼ÆËã´íÎó
-                        _cItem->setStatus(DIGIT,1);
-                        --remain_INITIAL;JudgeIsWin();
+                    if (_cItem->getStatus() != DIGIT)
+                    { //æ³¨æ„éœ€è¦åŠ ä¸ŠçŠ¶æ€åˆ¤æ–­ï¼Œä¸ç„¶ä¼šå†æ¬¡è®¾ç½®ç›¸åŒçŠ¶æ€ï¼Œæµªè´¹èµ„æºï¼Œä¸”æŠŠçŠ¶æ€ä¸ªæ•°å‡å»1ï¼Œé€ æˆè®¡ç®—é”™è¯¯
+                        _cItem->setStatus(DIGIT, 1);
+                        --remain_INITIAL;
+                        JudgeIsWin();
                     }
                     //cout<<"My surrounding has 1 mine."<<endl;
                     break;
                 case 2:
-                    if(_cItem->getStatus()!=DIGIT){
-                        _cItem->setStatus(DIGIT,2);
-                        --remain_INITIAL;JudgeIsWin();
+                    if (_cItem->getStatus() != DIGIT)
+                    {
+                        _cItem->setStatus(DIGIT, 2);
+                        --remain_INITIAL;
+                        JudgeIsWin();
                     }
                     //cout<<"My surrounding have 2 mines."<<endl;
                     break;
                 case 3:
-                    if(_cItem->getStatus()!=DIGIT){
-                        _cItem->setStatus(DIGIT,3);
-                        --remain_INITIAL;JudgeIsWin();
+                    if (_cItem->getStatus() != DIGIT)
+                    {
+                        _cItem->setStatus(DIGIT, 3);
+                        --remain_INITIAL;
+                        JudgeIsWin();
                     }
                     //cout<<"My surrounding have 3 mines."<<endl;
                     break;
                 case 4:
-                    if(_cItem->getStatus()!=DIGIT){
-                        _cItem->setStatus(DIGIT,4);
-                        --remain_INITIAL;JudgeIsWin();
+                    if (_cItem->getStatus() != DIGIT)
+                    {
+                        _cItem->setStatus(DIGIT, 4);
+                        --remain_INITIAL;
+                        JudgeIsWin();
                     }
                     //cout<<"My surrounding have 4 mines."<<endl;
                     break;
                 case 5:
-                    if(_cItem->getStatus()!=DIGIT){
-                        _cItem->setStatus(DIGIT,5);
-                        --remain_INITIAL;JudgeIsWin();
+                    if (_cItem->getStatus() != DIGIT)
+                    {
+                        _cItem->setStatus(DIGIT, 5);
+                        --remain_INITIAL;
+                        JudgeIsWin();
                     }
                     //cout<<"My surrounding have 5 mines."<<endl;
                     break;
                 case 6:
-                    if(_cItem->getStatus()!=DIGIT){
-                        _cItem->setStatus(DIGIT,6);
-                        --remain_INITIAL;JudgeIsWin();
+                    if (_cItem->getStatus() != DIGIT)
+                    {
+                        _cItem->setStatus(DIGIT, 6);
+                        --remain_INITIAL;
+                        JudgeIsWin();
                     }
                     //cout<<"My surrounding have 6 mines."<<endl;
                     break;
                 case 7:
-                    if(_cItem->getStatus()!=DIGIT){
-                        _cItem->setStatus(DIGIT,7);
-                        --remain_INITIAL;JudgeIsWin();
+                    if (_cItem->getStatus() != DIGIT)
+                    {
+                        _cItem->setStatus(DIGIT, 7);
+                        --remain_INITIAL;
+                        JudgeIsWin();
                     }
                     //cout<<"My surrounding have 7 mines."<<endl;
                     break;
                 case 8:
-                    if(_cItem->getStatus()!=DIGIT){
-                        _cItem->setStatus(DIGIT,8);
-                        --remain_INITIAL;JudgeIsWin();
+                    if (_cItem->getStatus() != DIGIT)
+                    {
+                        _cItem->setStatus(DIGIT, 8);
+                        --remain_INITIAL;
+                        JudgeIsWin();
                     }
                     //cout<<"My surrounding have 8 mines."<<endl;
                     break;
@@ -433,11 +500,13 @@ void MainWindow::block_blank(double px,double py,int x,int y){
     }
 }
 
-bool MainWindow::JudgeIsWin(){
+bool MainWindow::JudgeIsWin()
+{
     //qDebug()<<"remain_mines:"<<remain_mines;
     //qDebug()<<"remain_INITIAL:"<<remain_INITIAL;
-    if(0==remain_mines && Field->getMines()==remain_INITIAL){
-        QMessageBox::information(NULL,"Result","You win! New game will start...");
+    if (0 == remain_mines && Field->getMines() == remain_INITIAL)
+    {
+        QMessageBox::information(NULL, "Result", "You win! New game will start...");
         on_actionNew_game_triggered();
         return true;
     }
@@ -450,67 +519,79 @@ void MainWindow::Lost()
     QList<QGraphicsItem *>::iterator it;
     gItems = _view->items();
     it = gItems.begin();
-    while(it != gItems.end()) {
-        static double cw = IsScale ?  (*it)->boundingRect().width()*this->width()/_scene->width()*factor_Scale : (*it)->boundingRect().width();
-        static double ch = IsScale ?  (*it)->boundingRect().height()*this->width()/_scene->width()*factor_Scale : (*it)->boundingRect().height();
-        _cItem=dynamic_cast<cellItem*>(*it);
-        switch (Field->_cells[(*it)->pos().x()/cw][(*it)->pos().y()/ch]) {
+    while (it != gItems.end())
+    {
+        static double cw = IsScale ? (*it)->boundingRect().width() * this->width() / _scene->width() * factor_Scale : (*it)->boundingRect().width();
+        static double ch = IsScale ? (*it)->boundingRect().height() * this->width() / _scene->width() * factor_Scale : (*it)->boundingRect().height();
+        _cItem = dynamic_cast<cellItem *>(*it);
+        switch (Field->_cells[(*it)->pos().x() / cw][(*it)->pos().y() / ch])
+        {
         case -1:
-            if(_cItem->getStatus()!=EXPLODE) {
+            if (_cItem->getStatus() != EXPLODE)
+            {
                 _cItem->setStatus(EXPLODE);
                 break;
             }
         case 0:
-            if(_cItem->getStatus()!=BLANK) {
+            if (_cItem->getStatus() != BLANK)
+            {
                 _cItem->setStatus(BLANK);
                 //cout<<"My surrounding have no mines."<<endl;
                 break;
             }
         case 1:
-            if(_cItem->getStatus()!=DIGIT){//×¢ÒâĞèÒª¼ÓÉÏ×´Ì¬ÅĞ¶Ï£¬²»È»»áÔÙ´ÎÉèÖÃÏàÍ¬×´Ì¬£¬ÀË·Ñ×ÊÔ´£¬ÇÒ°Ñ×´Ì¬¸öÊı¼õÈ¥1£¬Ôì³É¼ÆËã´íÎó
-                _cItem->setStatus(DIGIT,1);
+            if (_cItem->getStatus() != DIGIT)
+            { //æ³¨æ„éœ€è¦åŠ ä¸ŠçŠ¶æ€åˆ¤æ–­ï¼Œä¸ç„¶ä¼šå†æ¬¡è®¾ç½®ç›¸åŒçŠ¶æ€ï¼Œæµªè´¹èµ„æºï¼Œä¸”æŠŠçŠ¶æ€ä¸ªæ•°å‡å»1ï¼Œé€ æˆè®¡ç®—é”™è¯¯
+                _cItem->setStatus(DIGIT, 1);
             }
             //cout<<"My surrounding has 1 mine."<<endl;
             break;
         case 2:
-            if(_cItem->getStatus()!=DIGIT){
-                _cItem->setStatus(DIGIT,2);
+            if (_cItem->getStatus() != DIGIT)
+            {
+                _cItem->setStatus(DIGIT, 2);
             }
             //cout<<"My surrounding have 2 mines."<<endl;
             break;
         case 3:
-            if(_cItem->getStatus()!=DIGIT){
-                _cItem->setStatus(DIGIT,3);
+            if (_cItem->getStatus() != DIGIT)
+            {
+                _cItem->setStatus(DIGIT, 3);
             }
             //cout<<"My surrounding have 3 mines."<<endl;
             break;
         case 4:
-            if(_cItem->getStatus()!=DIGIT){
-                _cItem->setStatus(DIGIT,4);
+            if (_cItem->getStatus() != DIGIT)
+            {
+                _cItem->setStatus(DIGIT, 4);
             }
             //cout<<"My surrounding have 4 mines."<<endl;
             break;
         case 5:
-            if(_cItem->getStatus()!=DIGIT){
-                _cItem->setStatus(DIGIT,5);
+            if (_cItem->getStatus() != DIGIT)
+            {
+                _cItem->setStatus(DIGIT, 5);
             }
             //cout<<"My surrounding have 5 mines."<<endl;
             break;
         case 6:
-            if(_cItem->getStatus()!=DIGIT){
-                _cItem->setStatus(DIGIT,6);
+            if (_cItem->getStatus() != DIGIT)
+            {
+                _cItem->setStatus(DIGIT, 6);
             }
             //cout<<"My surrounding have 6 mines."<<endl;
             break;
         case 7:
-            if(_cItem->getStatus()!=DIGIT){
-                _cItem->setStatus(DIGIT,7);
+            if (_cItem->getStatus() != DIGIT)
+            {
+                _cItem->setStatus(DIGIT, 7);
             }
             //cout<<"My surrounding have 7 mines."<<endl;
             break;
         case 8:
-            if(_cItem->getStatus()!=DIGIT){
-                _cItem->setStatus(DIGIT,8);
+            if (_cItem->getStatus() != DIGIT)
+            {
+                _cItem->setStatus(DIGIT, 8);
             }
             //cout<<"My surrounding have 8 mines."<<endl;
             break;

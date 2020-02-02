@@ -4,7 +4,8 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 
-namespace Ui {
+namespace Ui
+{
 class configDialog;
 }
 
@@ -13,7 +14,7 @@ class configDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit configDialog(int cw,int ch,int cm,QWidget *parent = 0);
+    explicit configDialog(int cw, int ch, int cm, QWidget *parent = 0);
     ~configDialog();
 
     int _width;

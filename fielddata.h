@@ -13,23 +13,23 @@ class FieldData
 {
 public:
     ~FieldData();
-    static FieldData * getInstance();
-    inline int getWidth(){return _width;}
-    inline int getHeight(){return _height;}
-    inline int getMines(){return _mines;}
-    const CellMatrix & getCells(){return _cells;}
+    static FieldData *getInstance();
+    inline int getWidth() { return _width; }
+    inline int getHeight() { return _height; }
+    inline int getMines() { return _mines; }
+    const CellMatrix &getCells() { return _cells; }
     void reset();
-    void initCells();//³õÊ¼»¯£¬ÉêÇë¿Õ¼ä
-    void deployMines();//²¼À×
-    void initVisited();//³õÊ¼»¯visited
+    void initCells();   //åˆå§‹åŒ–ï¼Œç”³è¯·ç©ºé—´
+    void deployMines(); //å¸ƒé›·
+    void initVisited(); //åˆå§‹åŒ–visited
 
-    void customizeWHM(int cw, int ch, int cm);//Ã¿´Îµã»÷ºó¸üĞÂ£¨²ÎÊı£º¿í£¬¸ß£¬À×£©
+    void customizeWHM(int cw, int ch, int cm); //æ¯æ¬¡ç‚¹å‡»åæ›´æ–°ï¼ˆå‚æ•°ï¼šå®½ï¼Œé«˜ï¼Œé›·ï¼‰
 
-    //void dump();//²¼À×Ö®ºó´òÓ¡
+    //void dump();//å¸ƒé›·ä¹‹åæ‰“å°
 
     CellMatrix _cells;
-    CellMatrix _visited;//ÊÇ·ñÒÑ¾­É¨¹ı(É¨¹ıÔòÎª1£¬·ñÔòÎª0)
-//    void dump();
+    CellMatrix _visited; //æ˜¯å¦å·²ç»æ‰«è¿‡(æ‰«è¿‡åˆ™ä¸º1ï¼Œå¦åˆ™ä¸º0)
+    //    void dump();
 protected:
     int _width;
     int _height;
@@ -39,7 +39,7 @@ protected:
     void updateSurrounding(int x, int y);
 
 private:
-    FieldData();//µ¥ÀıÄ£Ê½
+    FieldData(); //å•ä¾‹æ¨¡å¼
     static FieldData *_ins;
 };
 
