@@ -31,3 +31,5 @@ QMAKE_CXXFLAGS += -std=c++11
 
 RESOURCES += \
     res.qrc
+
+ICON = minesweeper.icns
